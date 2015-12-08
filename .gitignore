@@ -1,0 +1,7 @@
+/_build
+/cover
+/deps
+/config/dev.exs
+erl_crash.dump
+*.ez
+/releasebot

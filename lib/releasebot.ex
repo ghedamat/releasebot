@@ -1,0 +1,2 @@
+defmodule Releasebot do
+end
