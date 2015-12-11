@@ -42,10 +42,9 @@ config :releasebot, :repos,
 ```
 
 ## `Needs release?` Strategy
-Uses GH api to list commits between latest release and master excludling merge commits and [DOC] commits.
+Uses GH api to list commits between latest release and master excluding merge commits and [DOC] commits.
 
 If there are commits left, a release is needed.
-
 
 ## Build
 
