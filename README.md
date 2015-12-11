@@ -39,11 +39,10 @@ config :releasebot, :repos,
 ```
 
 ## `Needs release?` Strategy
-For each repository the HEAD SHA will be compared with the SHAs found in the tag list.
+Uses GH api to list commits between latest release and master excludling merge commits and [DOC] commits.
 
-If the SHA is not found then the repo **might** need a release.
+If there are commits left, a release is needed.
 
-**TODO:** this logic should be improved
 
 ## Build
 

@@ -1,30 +1,25 @@
 defmodule Releasebot.Repo do
   def needs_release?(repo) do
-    url = build_url(repo)
-    tags = get_tags(url)
-    head = get_head(url)
-    !(Enum.member?(tags, head))
+    c = diff(repo, start_tag(repo)) |> length
+    c > 0
   end
 
-  def get_tags(url) do
-    {out, status} = System.cmd("git", ["ls-remote", "--tags", url])
-    if status != 0 do
-      raise "git ls-remote failed"
-    end
-    out |> String.split
+  def start_tag(repo) do
+    Request.get("https://api.github.com/repos/#{repo}/releases/latest", [], token)
+    |> Dict.get("tag_name")
   end
 
-  def get_head(url) do
-    {out, status} = System.cmd("git", ["ls-remote", url, "master"])
-    if status != 0 do
-      raise "git ls-remote failed"
-    end
-    out |> String.split |> List.first
+  def diff(repo, start_tag, end_tag \\ "master") do
+    Request.get("https://api.github.com/repos/#{repo}/compare/#{start_tag}...#{end_tag}", [], token)
+    |> Dict.get("commits")
+    |> Enum.map( fn(c) -> c["commit"]["message"] end)
+    |> Enum.filter( fn(c) -> !Regex.match?(~r/Merge pull request #|\[DOC\]/, c) end)
   end
 
-  defp build_url(repo) do
-    "https://github.com/#{repo}"
+  def token do
+    cfg = Application.get_env(:releasebot, :github)
+    api_token = cfg[:token]
+    [{"Authorization", "token #{api_token}"}]
   end
+
 end
-
-#git ls-remote --tags https://github.com/ember-cli-deploy/ember-cli-deploy-plugin | grep $(git ls-remote https://github.com/ember-cli-deploy/ember-cli-deploy-plugin master | cut -f 1)`

@@ -4,6 +4,9 @@ config :releasebot, :slack,
   token: "",
   channel: ""
 
+config :releasebot, :github,
+  token: ""
+
 config :releasebot, :repos,
   [
     "u/r",
