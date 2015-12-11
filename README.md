@@ -19,6 +19,9 @@ config :releasebot, :slack,
   username: "releasebot",
   token: "XXX",
   channel: "CXXX"
+  
+config :releasebot, :github,
+  token: "XXX",
 
 config :releasebot, :repos,
   [
