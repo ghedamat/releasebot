@@ -7,6 +7,9 @@ config :releasebot, :slack,
 config :releasebot, :github,
   token: ""
 
+config :releasebot, :cutoff_date,
+  "2015-12-5"
+
 config :releasebot, :repos,
   [
     "u/r",

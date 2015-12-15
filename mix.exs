@@ -15,7 +15,7 @@ defmodule Releasebot.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :eex, :httpotion, :exjsx]]
+    [applications: [:logger, :eex, :httpotion, :exjsx, :tzdata]]
   end
 
   # Dependencies can be Hex packages:
@@ -32,7 +32,9 @@ defmodule Releasebot.Mixfile do
       {:mock, "~> 0.1.1", only: :test},
       {:ibrowse, github: "cmullaparthi/ibrowse", tag: "v4.1.2"},
       {:exjsx, "~> 3.0"},
-      {:httpotion, "~> 2.1.0"}
+      {:httpotion, "~> 2.1.0"},
+      {:timex, "~> 1.0.0-rc4"},
+      {:tzdata, "== 0.1.8", override: true}
     ]
   end
 
