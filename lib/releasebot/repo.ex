@@ -1,22 +1,22 @@
 defmodule Releasebot.Repo do
   use Timex
 
-  def needs_release?(repo) do
-    c = diff(repo, start_tag(repo)) |> length
+  def needs_release?(username, repo) do
+    c = diff(username, repo, start_tag(username, repo)) |> length
     c > 0
   end
 
-  def start_tag(repo) do
-    Request.get("https://api.github.com/repos/#{repo}/releases/latest", [], token)
+  def start_tag(username, repo) do
+    Tentacat.Releases.find("latest", username, repo, client)
     |> Dict.get("tag_name")
   end
 
-  def diff(repo, start_tag, end_tag \\ "master") do
-    Request.get("https://api.github.com/repos/#{repo}/compare/#{start_tag}...#{end_tag}", [], token)
+  def diff(username, repo, start_tag, end_tag \\ "master") do
+    Tentacat.Commits.compare(start_tag, end_tag, username, repo, client)
     |> Dict.get("commits")
     |> Enum.filter( &is_after_cutoff_date?/1 )
-    |> Enum.map( fn(c) -> c["commit"]["message"] end)
-    |> Enum.filter( fn(c) -> !Regex.match?(~r/Merge pull request #|\[DOC\]/, c) end)
+    |> Enum.map(fn(c) -> c["commit"]["message"] end)
+    |> Enum.filter(fn(c) -> !Regex.match?(~r/Merge pull request #|\[DOC\]/, c) end)
   end
 
   def is_after_cutoff_date?(commit) do
@@ -25,10 +25,10 @@ defmodule Releasebot.Repo do
     Date.compare(cutoff_date, date) < 0
   end
 
-  def token do
+  def client do
     cfg = Application.get_env(:releasebot, :github)
     api_token = cfg[:token]
-    [{"Authorization", "token #{api_token}"}]
+    Tentacat.Client.new(%{access_token: api_token})
   end
 
 end

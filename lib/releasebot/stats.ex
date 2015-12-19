@@ -2,8 +2,8 @@ defmodule Releasebot.Stats do
   require EEx
 
   def aggregate(repos) do
-    Enum.map(repos, fn(r) ->
-      [repo: r, needs_release: Releasebot.Repo.needs_release?(r)]
+    Enum.map(repos, fn({username, repo}) ->
+      [repo: "#{username}/#{repo}", needs_release: Releasebot.Repo.needs_release?(username, repo)]
     end)
   end
 

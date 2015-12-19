@@ -15,7 +15,7 @@ defmodule Releasebot.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :eex, :httpotion, :exjsx, :tzdata]]
+    [applications: [:logger, :eex, :httpotion, :exjsx, :tzdata, :tentacat]]
   end
 
   # Dependencies can be Hex packages:
@@ -34,7 +34,8 @@ defmodule Releasebot.Mixfile do
       {:exjsx, "~> 3.0"},
       {:httpotion, "~> 2.1.0"},
       {:timex, "~> 1.0.0-rc4"},
-      {:tzdata, "== 0.1.8", override: true}
+      {:tzdata, "== 0.1.8", override: true},
+      {:tentacat, path: "~/Dev/OSS/tentacat"}
     ]
   end
 
