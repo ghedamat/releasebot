@@ -25,7 +25,19 @@ defmodule Releasebot.Repo do
     Date.compare(cutoff_date, date) < 0
   end
 
-  def client do
+  def pulls(username, repo) do
+    Tentacat.Pulls.list(username, repo)
+    |> Enum.map(fn(p) ->
+      %{
+        url: p["html_url"],
+        number: p["number"],
+        title: p["title"],
+        updated_at: p["updated_at"],
+      }
+    end)
+  end
+
+  defp client do
     cfg = Application.get_env(:releasebot, :github)
     api_token = cfg[:token]
     Tentacat.Client.new(%{access_token: api_token})

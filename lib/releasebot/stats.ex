@@ -1,13 +1,8 @@
 defmodule Releasebot.Stats do
   require EEx
+  alias Releasebot.Repo
 
-  def aggregate(repos) do
-    Enum.map(repos, fn({username, repo}) ->
-      [repo: "#{username}/#{repo}", needs_release: Releasebot.Repo.needs_release?(username, repo)]
-    end)
-  end
-
-  def pretty_print(repos) do
+  def needs_release(repos) do
     str = ~S"""
     <%= if Enum.count(repos) > 0 do %>The following repos might need a release:
 
@@ -20,5 +15,30 @@ defmodule Releasebot.Stats do
     filtered = repos |> aggregate |> Enum.filter(fn(r) -> r[:needs_release] end)
 
     EEx.eval_string str, [repos: filtered]
+  end
+
+  def open_prs(repos) do
+    str = ~S"""
+    <%= if Enum.count(repos) > 0 do %>The following prs are open:
+
+    <%= for repo <- repos do %><%= for item <- repo do %>
+    <%= item[:url] %> #<%= item[:number] %> <%= item[:title] %>
+    last update on: <%= item[:updated_at] %>
+    <% end %><% end %>
+    <%= else %>No repo has on open pr
+    <% end %>
+    """
+
+    filtered = repos
+                |> Enum.map(fn({username, repo}) -> Repo.pulls(username, repo) end)
+                |> Enum.filter(fn(r) -> Enum.count(r) end)
+
+    EEx.eval_string str, [repos: filtered]
+  end
+
+  defp aggregate(repos) do
+    Enum.map(repos, fn({username, repo}) ->
+      [repo: "#{username}/#{repo}", needs_release: Repo.needs_release?(username, repo)]
+    end)
   end
 end
