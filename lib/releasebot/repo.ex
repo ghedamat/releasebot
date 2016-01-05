@@ -26,13 +26,15 @@ defmodule Releasebot.Repo do
   end
 
   def pulls(username, repo) do
-    Tentacat.Pulls.list(username, repo)
+    Tentacat.Pulls.list(username, repo, client)
     |> Enum.map(fn(p) ->
+      {:ok, date} = DateFormat.parse(p["updated_at"], "{ISO}")
+      {:ok, formatted } = DateFormat.format(date, "%a, %d %b %Y %H:%M:%S GMT", :strftime)
       %{
         url: p["html_url"],
         number: p["number"],
         title: p["title"],
-        updated_at: p["updated_at"],
+        updated_at: formatted
       }
     end)
   end

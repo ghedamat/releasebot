@@ -4,12 +4,14 @@ defmodule Releasebot.Stats do
 
   def needs_release(repos) do
     str = ~S"""
+    ---------
     <%= if Enum.count(repos) > 0 do %>The following repos might need a release:
 
     <%= for item <- repos do %>https://github.com/<%= item[:repo] %>
     <% end %>
     <%= else %>No repo needs a release
     <% end %>
+    ---------
     """
 
     filtered = repos |> aggregate |> Enum.filter(fn(r) -> r[:needs_release] end)
@@ -19,14 +21,17 @@ defmodule Releasebot.Stats do
 
   def open_prs(repos) do
     str = ~S"""
-    <%= if Enum.count(repos) > 0 do %>The following prs are open:
+    ---------
+    <%= if Enum.count(repos) > 0 do %>The following prs are open
 
     <%= for repo <- repos do %><%= for item <- repo do %>
-    <%= item[:url] %> #<%= item[:number] %> <%= item[:title] %>
+    link: <%= item[:url] %>
+    title: <%= item[:title] %>
     last update on: <%= item[:updated_at] %>
     <% end %><% end %>
     <%= else %>No repo has on open pr
     <% end %>
+    ---------
     """
 
     filtered = repos
