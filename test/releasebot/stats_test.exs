@@ -23,7 +23,7 @@ defmodule Releasebot.StatsTest do
 
 
     """
-    assert pretty_print(repos) == result
+    assert needs_release(repos) == result
   end
 
   test_with_mock "can tell if no repo needs a release", Releasebot.Repo, [needs_release?: fn(_) -> false end] do
@@ -32,7 +32,7 @@ defmodule Releasebot.StatsTest do
     No repo needs a release
 
     """
-    assert pretty_print(repos) == result
+    assert needs_release(repos) == result
   end
 
   test_with_mock "includes only repos that need a release", Releasebot.Repo, [needs_release?: fn(r) ->
@@ -50,6 +50,6 @@ defmodule Releasebot.StatsTest do
 
 
     """
-    assert pretty_print(repos) == result
+    assert needs_release(repos) == result
   end
 end

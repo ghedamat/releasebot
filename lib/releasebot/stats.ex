@@ -41,7 +41,7 @@ defmodule Releasebot.Stats do
     EEx.eval_string str, [repos: filtered]
   end
 
-  defp aggregate(repos) do
+  def aggregate(repos) do
     Enum.map(repos, fn({username, repo}) ->
       [repo: "#{username}/#{repo}", needs_release: Repo.needs_release?(username, repo)]
     end)
