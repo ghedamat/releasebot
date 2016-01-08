@@ -14,9 +14,17 @@ defmodule Releasebot.Stats do
     ---------
     """
 
-    filtered = repos |> aggregate |> Enum.filter(fn(r) -> r[:needs_release] end)
+    filtered = repos |> fetch_releases |> Enum.filter(fn(r) -> r[:needs_release] end)
 
     EEx.eval_string str, [repos: filtered]
+  end
+
+  def fetch_releases(repos) do
+    repos
+    |> Enum.map(fn({username, repo}) ->
+      Task.async(fn -> [repo: "#{username}/#{repo}", needs_release: Repo.needs_release?(username, repo)] end)
+    end)
+    |> Enum.map(&Task.await(&1))
   end
 
   def open_prs(repos) do
@@ -34,16 +42,16 @@ defmodule Releasebot.Stats do
     ---------
     """
 
-    filtered = repos
-                |> Enum.map(fn({username, repo}) -> Repo.pulls(username, repo) end)
-                |> Enum.filter(fn(r) -> Enum.count(r) end)
+    filtered = repos |> fetch_pulls |> Enum.filter(fn(r) -> Enum.count(r) end)
 
     EEx.eval_string str, [repos: filtered]
   end
 
-  def aggregate(repos) do
-    Enum.map(repos, fn({username, repo}) ->
-      [repo: "#{username}/#{repo}", needs_release: Repo.needs_release?(username, repo)]
+  def fetch_pulls(repos) do
+    repos
+    |> Enum.map(fn({username, repo}) ->
+      Task.async(fn -> Repo.pulls(username, repo) end)
     end)
+    |> Enum.map(&Task.await(&1))
   end
 end
