@@ -23,7 +23,11 @@ defmodule Request do
   end
 
   def json_request(method, url, body \\ "", headers \\ []) do
-    HTTPotion.request(method, url, [body: JSX.encode!(body), headers: headers]) |> process_response
+    if String.first(body) do
+      HTTPotion.request(method, url, [body: JSX.encode!(body), headers: headers])
+    else
+      HTTPotion.request(method, url, [headers: headers])
+    end
   end
 
   def build_url(url, params = []) do
