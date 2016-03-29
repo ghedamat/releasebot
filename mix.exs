@@ -35,7 +35,7 @@ defmodule Releasebot.Mixfile do
       {:httpotion, "~> 2.1.0"},
       {:timex, "~> 1.0.0-rc4"},
       {:tzdata, "== 0.1.8", override: true},
-      {:tentacat, "0.3.1"}
+      {:tentacat, "0.4.0"}
     ]
   end
 
